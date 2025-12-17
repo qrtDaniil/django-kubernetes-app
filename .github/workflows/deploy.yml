@@ -64,23 +64,24 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+  # deploy:
+  #   needs: build-and-push
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/main'
 
-    steps:
-      - uses: actions/checkout@v4
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Set up Kubeconfig
-        uses: azure/k8s-set-context@v3
-        with:
-          kubeconfig: ${{ secrets.KUBE_CONFIG }}
+  #     - name: Set up Kubeconfig
+  #       uses: azure/k8s-set-context@v3
+  #       with:
+  #         kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
-      - name: Deploy to Kubernetes
-        run: |
-          kubectl create namespace ${{ env.K8S_NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
-          kubectl apply -f k8s-manifests/ -n ${{ env.K8S_NAMESPACE }}
-          kubectl set image deployment/django-deployment django-app=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest -n ${{ env.K8S_NAMESPACE }}
-          kubectl rollout status deployment/django-deployment -n ${{ env.K8S_NAMESPACE }} --timeout=300s
-          kubectl get pods,svc,ingress -n ${{ env.K8S_NAMESPACE }}
+  #     - name: Deploy to Kubernetes
+  #       run: |
+  #         kubectl create namespace ${{ env.K8S_NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+  #         kubectl apply -f k8s-manifests/ -n ${{ env.K8S_NAMESPACE }}
+  #         kubectl set image deployment/django-deployment django-app=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest -n ${{ env.K8S_NAMESPACE }}
+  #         kubectl rollout status deployment/django-deployment -n ${{ env.K8S_NAMESPACE }} --timeout=300s
+  #         kubectl get pods,svc,ingress -n ${{ env.K8S_NAMESPACE }}
+  
